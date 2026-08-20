@@ -28,7 +28,9 @@ resource "aws_iam_role" "grc_gate" {
       Action    = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com" }
-        StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/${var.github_repo}:*" }
+        # GitHub appends immutable owner/repo IDs to the sub claim by default now
+        # (repo:OWNER@OWNERID/REPO@REPOID:*), so match on the IDs, not bare names.
+        StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}@*/${var.github_repo}@*:*" }
       }
     }]
   })
