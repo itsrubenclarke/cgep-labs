@@ -1,0 +1,5 @@
+exclude:
+  # aws-s3-encryption-customer-key: Lab 2.3's compliant-s3 module intentionally
+  # uses SSE-S3 (AES256) as the baseline; customer-managed KMS keys are
+  # introduced in a later lab (see the "KMS teaser" comment in main.tf).
+  - aws-s3-encryption-customer-key
