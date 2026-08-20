@@ -10,6 +10,7 @@ permissions:
   id-token: write       # required for AWS OIDC + Cosign keyless (Lab 4.4)
   contents: read
   pull-requests: write  # required to comment on the PR
+  security-events: write # required to upload tfsec SARIF to the Code Scanning tab
 
 env:
   AWS_REGION: us-east-1
@@ -85,6 +86,12 @@ jobs:
           # tfsec's own exit code is the gate (no JSON parsing required).
           tfsec "$TF_WORKING_DIR" --config-file .tfsec/config.yml --format sarif --out evidence/lab-4-3/tfsec.sarif || true
           tfsec "$TF_WORKING_DIR" --config-file .tfsec/config.yml --minimum-severity HIGH
+
+      - name: Upload tfsec results to Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: evidence/lab-4-3/tfsec.sarif
 
       - name: Copy plan into evidence
         if: always()
